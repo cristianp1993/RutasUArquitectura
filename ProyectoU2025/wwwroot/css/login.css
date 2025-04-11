@@ -1,0 +1,111 @@
+﻿
+
+body {
+    background-color: #edf5f2;
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    position: relative;
+}
+
+.login-box {
+    background-color: #cfd8d2;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 4px 5px 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    width: 350px;
+}
+
+.logo {
+    width: 200px;
+    margin-bottom: 30px;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.input-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #707070;
+    font-size: 20px;
+    pointer-events: none;
+}
+
+.input-group input {
+    padding-left: 40px; /* Deja espacio para el ícono */
+    height: 40px;
+    width: 100%;
+}
+
+.btn-login {
+    background-color: #8cc63f;
+    color: white;
+    width: 100%;
+    border: none;
+    padding: 10px;
+    font-weight: bold;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s;
+}
+
+    .btn-login:hover {
+        background-color: #79b134;
+    }
+
+.forgot-link {
+    display: block;
+    margin-top: 15px;
+    font-size: 0.9em;
+    color: #004080;
+    text-decoration: none;
+}
+
+.google-login {
+    margin-top: 20px;
+}
+
+.btn-google {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    color: #707070;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    width: 100%;
+    gap: 10px;
+}
+
+    .btn-google img {
+        width: 20px;
+        height: 20px;
+    }
+
+    .btn-google:hover {
+        background-color: #707070;
+        color: #ffffff;
+    }
+
+
+.corner-logo {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 80px;
+}
