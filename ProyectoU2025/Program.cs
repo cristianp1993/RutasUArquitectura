@@ -1,13 +1,47 @@
-﻿using ProyectoU2025.Db;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+using ProyectoU2025.Db;
 using ProyectoU2025.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
-//builder.Services.AddSingleton<DapperContext>();
-builder.Services.AddScoped<IDapperContext, DapperContext>();// LA LINEA ANTERIOR LA CAMBI� POR ESTA YA QUE NO ME EJECUTABA EL PROYECTO
+builder.Services.AddScoped<IDapperContext, DapperContext>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddHttpContextAccessor();
+// Configuración de sesión 
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(200);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+}); 
+
+// Configuración de autenticación
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+})
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.AccessDeniedPath = "/Account/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+    })
+    .AddGoogle(options =>
+    {
+        options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+        options.CallbackPath = "/Profile";
+
+        options.Scope.Add("profile");
+        options.Scope.Add("email");
+
+        options.ClaimActions.MapJsonKey("picture", "picture");
+        options.ClaimActions.MapJsonKey("locale", "locale");
+    });
 
 var app = builder.Build();
 
@@ -15,7 +49,6 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -24,6 +57,9 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+
+app.UseSession(); 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

@@ -1,6 +1,8 @@
 ﻿using ProyectoU2025.Db;
 using ProyectoU2025.Models;
 using Dapper;
+using System.Data;
+using System.Threading.Tasks;
 using ProyectoU2025.Querys;
 
 namespace ProyectoU2025.Repositories
@@ -13,21 +15,61 @@ namespace ProyectoU2025.Repositories
         {
             _context = context;
         }
-        public async Task<t_usuarios> GetByEmailAsync(string email)
-        {            
+
+        public async Task<t_usuario> GetByEmailAsync(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email)) return null;
 
             await using var con = await _context.CreateConnectionAsync();
-            return await con.QueryFirstOrDefaultAsync<t_usuarios>(UsuariosQuerys.GetByEmail, new { Email = email });
+            return await con.QueryFirstOrDefaultAsync<t_usuario>(
+                UsuariosQuerys.GetByEmail,
+                new { usu_email = email }); // Nombre de parámetro coincide
         }
 
-        public Task<t_usuarios> GetByGoogleIdAsync(string googleId)
+        public async Task<t_usuario> GetByGoogleIdAsync(string googleId)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(googleId)) return null;
+
+            await using var con = await _context.CreateConnectionAsync();
+            return await con.QueryFirstOrDefaultAsync<t_usuario>(
+                UsuariosQuerys.GetByGoogleId,
+                new { usu_google_id = googleId });
         }
 
-        public Task<int> AddAsync(t_usuarios usuario)
+        public async Task<int> AddAsync(t_usuario usuario)
         {
-            throw new NotImplementedException();
+            await using var con = await _context.CreateConnectionAsync();
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@usu_google_id", usuario.usu_google_id, DbType.String);
+            parameters.Add("@usu_email", usuario.usu_email, DbType.String);
+            parameters.Add("@usu_nombre", usuario.usu_nombre, DbType.String);
+            parameters.Add("@usu_contrasenia", "123456", DbType.String);
+            parameters.Add("@usu_rol", usuario.usu_rol ?? "usuario", DbType.String);            
+            parameters.Add("@usu_id", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+            await con.ExecuteAsync(
+                UsuariosQuerys.Insert,
+                parameters,
+                commandType: CommandType.StoredProcedure);
+
+            return parameters.Get<int>("@usu_id");
+        }
+
+        public async Task UpdateAsync(t_usuario usuario)
+        {
+            await using var con = await _context.CreateConnectionAsync();
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@usu_id", usuario.usu_id, DbType.Int32);
+            parameters.Add("@usu_google_id", usuario.usu_google_id, DbType.String);
+            parameters.Add("@usu_email", usuario.usu_email, DbType.String);
+            parameters.Add("@usu_rol", usuario.usu_rol, DbType.String);
+
+            await con.ExecuteAsync(
+                UsuariosQuerys.Update,
+                parameters,
+                commandType: CommandType.StoredProcedure);
         }
     }
 }

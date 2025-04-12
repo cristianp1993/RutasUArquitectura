@@ -2,9 +2,16 @@
 {
     public class UsuariosQuerys
     {
-        public static string GetByEmail => @"
-        SELECT usu_id as Id, usu_email as Email, usu_rol as Rol 
-        FROM t_usuarios 
-        WHERE usu_email = @Email";
+        public static string GetByEmail = @"
+        SELECT * FROM t_usuario
+        WHERE usu_email = @usu_email";  
+
+        public static string GetByGoogleId = @"
+        SELECT * FROM t_usuario
+        WHERE usu_google_id = @usu_google_id";
+
+        public static string Insert = "sp_InsertUsuario";      
+        public static string Update = "sp_UpdateUsuario";
+
     }
 }

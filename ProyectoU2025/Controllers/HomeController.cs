@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProyectoU2025.Models;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace ProyectoU2025.Controllers
 {
@@ -15,9 +17,19 @@ namespace ProyectoU2025.Controllers
 
         public IActionResult Index()
         {
+            // Mostrar información del usuario si está autenticado
+            if (User.Identity.IsAuthenticated)
+            {
+                ViewData["UserName"] = User.Identity.Name;
+                ViewData["UserEmail"] = User.FindFirstValue(ClaimTypes.Email);
+                ViewData["UserPicture"] = User.FindFirstValue("picture");
+            }
             return View();
         }
 
+
+
+        [Authorize]
         public IActionResult Privacy()
         {
             return View();

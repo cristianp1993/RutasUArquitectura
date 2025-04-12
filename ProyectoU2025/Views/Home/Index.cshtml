@@ -40,10 +40,12 @@
             </div>
 
             <div class="google-login">
-                <button class="btn-google">
-                    <img src="~/img/logo-google.png" alt="Google Logo" />
-                    Ingresar con Google
-                </button>
+                <form asp-controller="Account" asp-action="GoogleLogin" method="post">
+                    <button type="submit" class="btn-google">
+                        <img src="~/img/logo-google.png" alt="Google Logo" />
+                        Ingresar con Google
+                    </button>
+                </form>
             </div>
         </div>
 
