@@ -42,6 +42,7 @@ namespace ProyectoU2025.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GoogleResponse(string returnUrl = "/Profile/Index")
         {
+            // Autenticar al usuario con Google
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
             if (!result.Succeeded)
@@ -54,6 +55,13 @@ namespace ProyectoU2025.Controllers
             var googleId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var email = User.FindFirstValue(ClaimTypes.Email);
             var name = User.FindFirstValue(ClaimTypes.Name);
+
+            // Validar que el correo pertenezca al dominio @ucaldas.edu.co
+            if (!email.EndsWith("@ucaldas.edu.co"))
+            {
+                TempData["Error"] = "Solo se permiten correos del dominio @ucaldas.edu.co";
+                return RedirectToAction("Home");
+            }
 
             // Buscar usuario en la base de datos
             var usuario = await _usuarioRepository.GetByGoogleIdAsync(googleId) ??
@@ -100,8 +108,8 @@ namespace ProyectoU2025.Controllers
                 new ClaimsPrincipal(claimsIdentity),
                 new AuthenticationProperties
                 {
-                    IsPersistent = true, 
-                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(200) 
+                    IsPersistent = true,
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(200)
                 });
 
             return LocalRedirect(returnUrl);
