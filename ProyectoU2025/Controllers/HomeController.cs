@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ProyectoU2025.Models;
+using ProyectoU2025.Models.ViewModels;
 using System.Diagnostics;
 using System.Security.Claims;
 

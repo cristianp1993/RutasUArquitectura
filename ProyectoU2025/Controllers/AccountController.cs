@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProyectoU2025.Models;
 using ProyectoU2025.Repositories;
+using ProyectoU2025.Repositories.Interfaces;
 using System.Security.Claims;
 
 namespace ProyectoU2025.Controllers
@@ -12,11 +13,13 @@ namespace ProyectoU2025.Controllers
     public class AccountController : Controller
     {
         private readonly IUsuarioRepository _usuarioRepository;
+        private readonly ISessionManager _sessionManager;
 
 
-        public AccountController(IUsuarioRepository usuarioRepository)
+        public AccountController(IUsuarioRepository usuarioRepository, ISessionManager sessionManager)
         {
-            _usuarioRepository = usuarioRepository; 
+            _usuarioRepository = usuarioRepository;
+            _sessionManager = sessionManager;
         }
 
         [AllowAnonymous]
@@ -78,11 +81,8 @@ namespace ProyectoU2025.Controllers
             }
 
             // Almacenar información del usuario en la sesión 
-            HttpContext.Session.SetInt32("usu_id", usuario.usu_id);
-            HttpContext.Session.SetString("usu_email", usuario.usu_email);
-            HttpContext.Session.SetString("usu_nombre", usuario.usu_nombre);
-            HttpContext.Session.SetString("usu_rol", usuario.usu_rol);
-            
+            _sessionManager.SetUserSession(usuario);
+
             // Crear una identidad de usuario y firmar una cookie de autenticación
             var claims = new List<Claim>
             {

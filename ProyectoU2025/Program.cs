@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using ProyectoU2025.Db;
 using ProyectoU2025.Repositories;
+using ProyectoU2025.Repositories.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IDapperContext, DapperContext>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ISessionManager, SessionManager>();
 // Configuración de sesión 
 builder.Services.AddSession(options =>
 {

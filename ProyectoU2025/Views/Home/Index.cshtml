@@ -25,15 +25,15 @@
 
             <div class="input-group">
                 <i class="bi bi-person input-icon"></i>
-                <input type="text" placeholder="Correo electrónico" />
+                <input type="text" id="email" placeholder="Correo electrónico" />
             </div>
 
             <div class="input-group">
                 <i class="bi bi-lock input-icon"></i>
-                <input type="password" placeholder="Contraseña" />
+                <input type="password" id="password" placeholder="Contraseña" />
             </div>
 
-            <a asp-controller="Profile" asp-action="Index" class="btn-login">INGRESAR</a>
+            <button id="loginButton" class="btn-login">INGRESAR</button>
 
             <div class="text-center">
                 <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
@@ -51,5 +51,15 @@
 
         <img src="~/img/location-100.png" alt="CampusNav Icon" class="corner-logo" />
     </div>
+    <dialog id="errorDialog" closedBy="any">
+        <div class="dialog-content">
+            <p id="errorMessage"></p>
+            <button id="closeDialog" class="btn-close">Cerrar</button>
+        </div>
+    </dialog>
+    <script src="~/js/Home/Home.js"></script>
+   
 </body>
+
+
 </html>

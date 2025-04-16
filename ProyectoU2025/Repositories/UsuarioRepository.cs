@@ -4,6 +4,7 @@ using Dapper;
 using System.Data;
 using System.Threading.Tasks;
 using ProyectoU2025.Querys;
+using ProyectoU2025.Repositories.Interfaces;
 
 namespace ProyectoU2025.Repositories
 {
@@ -23,7 +24,18 @@ namespace ProyectoU2025.Repositories
             await using var con = await _context.CreateConnectionAsync();
             return await con.QueryFirstOrDefaultAsync<t_usuario>(
                 UsuariosQuerys.GetByEmail,
-                new { usu_email = email }); // Nombre de parámetro coincide
+                new { usu_email = email }); 
+        }
+
+        public async Task<t_usuario> GetUserByEmailPasswordAsync(string email, string password)
+        {
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+                return null;
+
+            await using var con = await _context.CreateConnectionAsync();
+            return await con.QueryFirstOrDefaultAsync<t_usuario>(
+                UsuariosQuerys.GetByEmailAndPassword,
+                new { usu_email = email, usu_contrasenia = password });
         }
 
         public async Task<t_usuario> GetByGoogleIdAsync(string googleId)
