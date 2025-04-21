@@ -2,11 +2,11 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <!-- Begin Page Content -->
-            <div class="container-fluid">
+<div class="container-fluid">
 
-            <!-- Page Heading -->
-                <div class="container mt-4">
-                    <div class="row">
+    <!-- Page Heading -->
+    <div class="container mt-4">
+        <div class="row">
             <!-- Search -->
             <div class="col-md-6 d-flex">
                 <div class="card shadow-sm w-100 h-400">
@@ -21,9 +21,10 @@
                                 <div class="col-12 mb-3">
                                     <select class="form-control form-control-user" id="SelecSearcht">
                                         <option value="">Seleccione una opción</option>
-                                        <option value="opcion1">Clase</option>
-                                        <option value="opcion2">Salón Anterior</option>
-                                        <option value="opcion3">Docente</option>
+                                        <option value="clase">Clase</option>
+                                        <option value="asignatura">Asignatura</option>
+                                        <option value="docente">Docente</option>
+                                        <option value="salon">Salón</option>
                                     </select>
                                 </div>
 
@@ -34,31 +35,50 @@
                         </div>
 
                         <div class="text-center">
-                            <button class="btn btn-success btn-sm">BUSCAR</button>
+                            <button id="btn-buscar-info" class="btn btn-success btn-sm">BUSCAR</button>
+                        </div>
+
+                        <div>
+                            <h4>Resultado de la busqueda</h4>
+                            <section class="response">
+
+                            </section>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- Segunda tarjeta: Ubicación -->
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="text-center">
+                            <i class="fas fa-map-marker-alt fa-2x"></i>
+                            <h1 class="h3 mb-3 text-gray-800">Ubicación</h1>
+                        </div>
+
+                        <div class="text-center">
+                            <img src="img/mapa.png" alt="Mapa" class="img-fluid">
+                        </div>
+                        <div class="text-center">
+                            <button type="button" class="btn btn-success btn-sm">VER UBICACIÓN EN MAPA</button>
                         </div>
                     </div>
                 </div>
             </div>
-                        <!-- Segunda tarjeta: Ubicación -->
-                        <div class="col-md-6">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <div class="text-center">
-                                        <i class="fas fa-map-marker-alt fa-2x"></i>
-                                        <h1 class="h3 mb-3 text-gray-800">Ubicación</h1>
-                                    </div>
+        </div>
+    </div>
 
-                                    <div class="text-center">
-                                        <img src="img/mapa.png" alt="Mapa" class="img-fluid">
-                                    </div>
-                                    <div class="text-center">
-                                        <button class="btn btn-success btn-sm">VER UBICACIÓN EN MAPA</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+</div>
+<!-- Diálogo para mensajes de validación -->
+<dialog id="validationDialog" class="dialog">
+    <div class="dialog-content">
+        <h3 id="dialogTitle">Error</h3>
+        <p id="dialogMessage"></p>
+        <button id="closeDialogButton" class="btn btn-primary">Cerrar</button>
+    </div>
+</dialog>
 
-            </div>
-            <!-- /.container-fluid -->
+@section Scripts {
+    <script src="~/js/Search/Search.js"></script>
+}

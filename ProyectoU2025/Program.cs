@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.Google;
 using ProyectoU2025.Db;
 using ProyectoU2025.Repositories;
 using ProyectoU2025.Repositories.Interfaces;
+using ProyectoU2025.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,11 @@ builder.Services.AddScoped<IDapperContext, DapperContext>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ISessionManager, SessionManager>();
+builder.Services.AddScoped<ISalonRepository, SalonRepository>();
+//builder.Services.AddHttpClient<DeepSeekService>();
+builder.Services.AddScoped<SalonService>();
+
+
 // Configuración de sesión 
 builder.Services.AddSession(options =>
 {
