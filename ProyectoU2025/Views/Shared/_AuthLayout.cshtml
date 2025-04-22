@@ -1,0 +1,28 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CampusNav - @ViewData["Title"]</title>
+
+    <!-- Bootstrap y estilos -->
+    <link href="~/css/style.min.css" rel="stylesheet" />
+    <link href="~/css/login.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <img src="~/img/logo.png" alt="CampusNav Logo" class="logo" />
+            @RenderBody()
+        </div>
+
+        <img src="~/img/location-100.png" alt="CampusNav Icon" class="corner-logo" />
+    </div>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

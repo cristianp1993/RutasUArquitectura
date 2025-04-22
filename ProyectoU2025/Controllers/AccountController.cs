@@ -48,7 +48,7 @@ namespace ProyectoU2025.Controllers
             if (!result.Succeeded)
             {
                 TempData["Error"] = "Error al autenticar con Google";
-                return RedirectToAction("Home");
+                return RedirectToAction("Error");
             }
 
             // Obtener información del usuario de Google
@@ -60,7 +60,7 @@ namespace ProyectoU2025.Controllers
             if (!email.EndsWith("@ucaldas.edu.co"))
             {
                 TempData["Error"] = "Solo se permiten correos del dominio @ucaldas.edu.co";
-                return RedirectToAction("Home");
+                return RedirectToAction("Error");
             }
 
             // Buscar usuario en la base de datos
@@ -120,6 +120,12 @@ namespace ProyectoU2025.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Home");
+        }
+
+        [AllowAnonymous]
+        public IActionResult Error()
+        {
+            return View();
         }
     }
 }

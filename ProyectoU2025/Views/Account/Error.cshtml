@@ -1,0 +1,12 @@
+﻿@{
+    ViewData["Title"] = "Error";
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+}
+
+    <h4 style="color: #d9534f;">Ha ocurrido un error</h4>
+    <p style="margin-top: 15px; color: #333;">@TempData["Error"]</p>
+    <form asp-controller="Home" asp-action="Index">
+        <button type="submit" class="btn-login" style="margin-top: 25px;">
+            Volver al Login
+        </button>
+    </form>
