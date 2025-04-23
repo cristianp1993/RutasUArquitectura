@@ -9,5 +9,6 @@
         public string usu_nombre { get; set; }
         public DateTime usu_fecha_registro { get; set; }
         public string usu_contrasenia { get; set; }
+        public string usu_codigo_estudiante { get; set; }
     }
 }

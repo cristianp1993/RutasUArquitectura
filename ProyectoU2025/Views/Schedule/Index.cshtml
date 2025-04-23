@@ -1,0 +1,106 @@
+﻿@using ProyectoU2025.Models.ViewModels
+@model IEnumerable<ScheduleViewModel>
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var diasSemana = new[] { "lunes", "martes", "miercoles", "jueves", "viernes", "sabado" };
+
+    // Colores Bootstrap por día
+    var dayColors = new Dictionary<string, string>
+    {
+        { "lunes", "bg-primary text-dark" },
+        { "martes", "bg-success text-white" },
+        { "miercoles", "bg-warning text-dark" },
+        { "jueves", "bg-info text-white" },
+        { "viernes", "bg-danger text-white" },
+        { "sabado", "bg-secondary text-white" }
+    };
+}
+
+@functions {
+    public string NormalizeDay(string day)
+    {
+        return day?.ToLowerInvariant()
+                   .Replace("á", "a")
+                   .Replace("é", "e")
+                   .Replace("í", "i")
+                   .Replace("ó", "o")
+                   .Replace("ú", "u");
+    }
+}
+
+<div class="container-fluid">
+    <div class="container mt-4">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <i class="fas fa-calendar-alt fa-2x"></i>
+                <h1 class="h3 mb-3 text-gray-800">Mi Horario Semanal</h1>
+            </div>
+
+            <div class="card-body">
+                @if (!Model.Any())
+                {
+                    <div class="alert alert-info text-center">
+                        No hay clases registradas para este estudiante.
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-bordered text-center align-middle" style="width: 100%; table-layout: fixed;">
+                            <thead class="thead-dark">
+                                <tr>
+                                    @foreach (var dia in diasSemana)
+                                    {
+                                        <th class="@dayColors[dia] text-uppercase" style="width: 16.6%;">@dia</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    @foreach (var dia in diasSemana)
+                                    {
+                                        var clasesDia = Model
+                                        .Where(m => NormalizeDay(m.Day) == dia)
+                                        .OrderBy(m => m.StartTime)
+                                        .ToList();
+
+                                        <td style="vertical-align: top; overflow-wrap: break-word;">
+                                            @if (clasesDia.Any())
+                                            {
+                                                foreach (var clase in clasesDia)
+                                                {
+                                                    <div class="mb-3 p-2 border rounded shadow-sm bg-light text-start small">
+                                                        <strong>@clase.SubjectName</strong><br /><br />
+                                                        <span class="text-muted">@clase.TeacherName</span><br /><br />
+                                                        <span class="badge bg-dark text-white">@clase.StartTime.ToString(@"hh\:mm") - @clase.EndTime.ToString(@"hh\:mm")</span><br /><br />
+                                                        <span><i class="fas fa-door-closed"></i> Aula <strong>@clase.Room</strong></span><br />
+                                                        <span><i class="fas fa-map-marker-alt"></i> Bloque @clase.Block,<br /> Ed. @clase.Building</span><br />
+                                                        <span class="text-muted">Sede @clase.Campus</span><br />
+                                                        <form asp-controller="Location" asp-action="Index" method="get" class="mt-1">
+                                                            <input type="hidden" name="roomName" value="@clase.Room" />
+                                                            <button type="submit" class="btn btn-outline-success btn-sm w-100" title="Cómo llegar">
+                                                                <i class="fas fa-route"></i> Ver Ruta
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Sin clases</span>
+                                            }
+                                        </td>
+                                    }
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                }
+            </div>
+        </div>
+    </div>
+</div>

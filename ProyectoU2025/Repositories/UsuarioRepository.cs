@@ -57,7 +57,6 @@ namespace ProyectoU2025.Repositories
             parameters.Add("@usu_email", usuario.usu_email, DbType.String);
             parameters.Add("@usu_nombre", usuario.usu_nombre, DbType.String);
             parameters.Add("@usu_contrasenia", "123456", DbType.String);
-            parameters.Add("@usu_rol", usuario.usu_rol ?? "usuario", DbType.String);            
             parameters.Add("@usu_id", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
             await con.ExecuteAsync(
@@ -83,5 +82,20 @@ namespace ProyectoU2025.Repositories
                 parameters,
                 commandType: CommandType.StoredProcedure);
         }
+
+        public async Task<t_usuario> GetByIdAsync(int id)
+        {
+            await using var con = await _context.CreateConnectionAsync();
+            return await con.QueryFirstOrDefaultAsync<t_usuario>(
+                "SELECT * FROM t_usuario WHERE usu_id = @usu_id",
+                new { usu_id = id });
+        }
+
+        public async Task<string?> GetStudentCodeByIdAsync(int id)
+        {
+            var user = await GetByIdAsync(id);
+            return user?.usu_codigo_estudiante;
+        }
+
     }
 }

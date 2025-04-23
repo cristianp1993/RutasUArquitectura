@@ -1,4 +1,5 @@
 ﻿using ProyectoU2025.Repositories.Interfaces;
+using System.Text.Json;
 
 namespace ProyectoU2025.Services
 {
@@ -18,10 +19,9 @@ namespace ProyectoU2025.Services
         {
             try
             {
-                // Validar que el valor de entrada no esté vacío
                 if (string.IsNullOrWhiteSpace(valorInput))
                 {
-                    return System.Text.Json.JsonSerializer.Serialize(new
+                    return JsonSerializer.Serialize(new
                     {
                         success = false,
                         message = "El valor de búsqueda no puede estar vacío.",
@@ -29,75 +29,67 @@ namespace ProyectoU2025.Services
                     });
                 }
 
-                // Obtener el salón desde el repositorio
-                var salon = await _salonRepository.GetSalonAsync(tipo, valorInput);
-                if (salon == null)
+                var salones = await _salonRepository.GetSalonesAsync(tipo, valorInput);
+                if (salones == null || !salones.Any())
                 {
-                    return System.Text.Json.JsonSerializer.Serialize(new
+                    return JsonSerializer.Serialize(new
                     {
                         success = false,
-                        message = "No se pudo identificar la información con los datos proporcionados.",
+                        message = "No se encontraron coincidencias.",
                         data = (object)null
                     });
                 }
 
-                // Generar la respuesta según el tipo
-                string response;
-
-                switch (tipo.ToLower())
+                var mensajes = salones.Select(salon =>
                 {
-                    case "docente":
-                        response = $"El docente {salon.DocenteNombre} estará en el salón {salon.SalonCodigo}, que está en el edificio {salon.EdificioNombre}, en la sede {salon.SedeNombre}, y dictará la clase {salon.AsignaturaNombre}.";
-                        break;
+                    var dia = string.IsNullOrWhiteSpace(salon.Dia) ? "día no definido" : salon.Dia;
+                    var horaInicio = salon.HoraInicio?.ToString(@"hh\:mm") ?? "hora no definida";
+                    var horaFin = salon.HoraFin?.ToString(@"hh\:mm") ?? "hora no definida";
+                    var horario = $" El día {dia} de {horaInicio} a {horaFin}.";
 
-                    case "asignatura":
-                        response = $"La clase de {salon.AsignaturaNombre} se dará en el salón {salon.SalonCodigo}, que está en el edificio {salon.EdificioNombre}, en la sede {salon.SedeNombre}.";
-                        break;
+                    var cambio = string.Empty;
+                    if (salon.CambioFechaInicio.HasValue && salon.CambioFechaFin.HasValue)
+                    {
+                        var fechaInicio = salon.CambioFechaInicio.Value.ToString("yyyy-MM-dd");
+                        var fechaFin = salon.CambioFechaFin.Value.ToString("yyyy-MM-dd");
+                        var motivo = string.IsNullOrWhiteSpace(salon.CambioMotivo) ? "Motivo no especificado" : salon.CambioMotivo;
 
-                    case "clase":
-                        response = $"La clase con código {valorInput} y asignatura {salon.AsignaturaNombre} se dará en el salón {salon.SalonCodigo}, que está en el edificio {salon.EdificioNombre}, en la sede {salon.SedeNombre}, y será dictada por el profesor {salon.DocenteNombre}.";
-                        break;
+                        var nuevaUbicacion = string.IsNullOrWhiteSpace(salon.NuevoSalonNombre)
+                            ? ""
+                            : $" Las clases se trasladarán al salón {salon.NuevoSalonNombre}, ubicado en el edificio {salon.NuevoEdificioNombre}, bloque {salon.NuevoBloqueNombre}, sede {salon.NuevaSedeNombre}.";
 
-                    case "salon":
-                        response = $"El salón {salon.SalonCodigo} está en el edificio {salon.EdificioNombre}, en la sede {salon.SedeNombre}, y la clase la dictará el instructor {salon.DocenteNombre}.";
-                        break;
+                        cambio = $" ⚠️ Cambio de aula entre el {fechaInicio} y el {fechaFin}. Motivo: {motivo}.{nuevaUbicacion}";
+                    }
 
-                    default:
-                        return System.Text.Json.JsonSerializer.Serialize(new
-                        {
-                            success = false,
-                            message = "El tipo de búsqueda no es válido. Los valores permitidos son: 'docente', 'asignatura', 'clase' o 'salon'.",
-                            data = (object)null
-                        });
-                }
+                    return tipo.ToLower() switch
+                    {
+                        "docente" => $"El docente {salon.DocenteNombre} estará en el salón {salon.SalonNombre}, en el edificio {salon.EdificioNombre}, sede {salon.SedeNombre}, dictando la clase {salon.AsignaturaNombre}.{horario}{cambio}",
+                        "asignatura" => $"La clase de {salon.AsignaturaNombre} será en el salón {salon.SalonNombre}, edificio {salon.EdificioNombre}, sede {salon.SedeNombre}.{horario}{cambio}",
+                        "clase" => $"La clase con código {valorInput}, asignatura {salon.AsignaturaNombre}, se dictará en el salón {salon.SalonNombre}, edificio {salon.EdificioNombre}, sede {salon.SedeNombre}, con el profesor {salon.DocenteNombre}.{horario}{cambio}",
+                        "salon" => $"El salón {salon.SalonNombre} está en el edificio {salon.EdificioNombre}, sede {salon.SedeNombre}, con clase a cargo de {salon.DocenteNombre}.{horario}{cambio}",
+                        _ => "Tipo de búsqueda no reconocido."
+                    };
+                }).ToList();
 
-                // Retornar la respuesta serializada
-                return System.Text.Json.JsonSerializer.Serialize(new
+
+                return JsonSerializer.Serialize(new
                 {
                     success = true,
-                    message = response,
-                    data = new
-                    {
-                        salon.SalonCodigo,
-                        salon.EdificioNombre,
-                        salon.SedeNombre,
-                        salon.AsignaturaNombre,
-                        salon.DocenteNombre,
-                        salon.RutaEdificio
-                    }
+                    message = $"{mensajes.Count} resultado(s) encontrados.",
+                    data = mensajes
                 });
             }
             catch (Exception ex)
             {
-                // Capturar errores inesperados
-                return System.Text.Json.JsonSerializer.Serialize(new
+                return JsonSerializer.Serialize(new
                 {
                     success = false,
-                    message = "No se pudo realizar la petición. Ocurrió un error inesperado.",
+                    message = "Error inesperado.",
                     data = (object)null,
                     errorDetails = ex.Message
                 });
             }
         }
+
     }
 }

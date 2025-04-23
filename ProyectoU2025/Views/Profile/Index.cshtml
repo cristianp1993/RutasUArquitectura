@@ -2,77 +2,78 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var nombre = HttpContextAccessor.HttpContext.Session.GetString("usu_nombre") ?? "Usuario";
+    var rol = HttpContextAccessor.HttpContext.Session.GetString("usu_rol") ?? "Invitado";
 }
-<!-- Begin Page Content -->
-<div class="container-fluid">
 
-    <!-- Page Heading -->
-    <div class="container mt-4">
-        <div class="card shadow-sm">
-
-            <!-- Profile-->
-            <div class="card-body">
-                <div class="text-center">
-                    <i class="fas fa-user fa-2x"></i>
-                    <h1 class="h3 mb-3 text-gray-800">Perfil</h1>
-                </div>
-
-                <div class="profile-header ">
-                    <p><strong>Código:</strong> @(HttpContextAccessor.HttpContext.Session.GetString("usu_id") ?? "No disponible")</p>
-                    <p><strong>Nombre:</strong> @(HttpContextAccessor.HttpContext.Session.GetString("usu_nombre") ?? "No disponible")</p>
-                    <p><strong>Correo Electrónico:</strong> @(HttpContextAccessor.HttpContext.Session.GetString("usu_email") ?? "No disponible")</p>
-                </div>
-            </div>
-
-            <!-- Tabla de asignaturas -->
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered text-center">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th>Día</th>
-                                <th>Asignatura</th>
-                                <th>Aula</th>
-                                <th>Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Lunes</td>
-                                <td>Programación Multimedia y Videojuegos</td>
-                                <td>SALA J</td>
-                                <td><button class="btn btn-success btn-sm">VER RUTA EN EL MAPA</button></td>
-                            </tr>
-                            <tr>
-                                <td>Martes</td>
-                                <td>Gestión del Conocimiento Empresarial</td>
-                                <td>G402B</td>
-                                <td><button class="btn btn-success btn-sm">VER RUTA EN EL MAPA</button></td>
-                            </tr>
-                            <tr>
-                                <td>Miércoles</td>
-                                <td>Estadística y Probabilidad para Negocios</td>
-                                <td>G402B</td>
-                                <td><button class="btn btn-success btn-sm">VER RUTA EN EL MAPA</button></td>
-                            </tr>
-                            <tr>
-                                <td>Jueves</td>
-                                <td>Arquitectura de Software</td>
-                                <td>SALA H</td>
-                                <td><button class="btn btn-success btn-sm">VER RUTA EN EL MAPA</button></td>
-                            </tr>
-                            <tr>
-                                <td>Viernes</td>
-                                <td>Inglés III</td>
-                                <td>U110</td>
-                                <td><button class="btn btn-success btn-sm">VER RUTA EN EL MAPA</button></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-        </div>
+<div class="container-fluid mt-4">
+    <div class="text-center mb-4">
+        <h1 class="h3 text-gray-800">¡Bienvenido, @nombre!</h1>
+        <p class="text-muted">Panel principal - Rol: <strong>@rol</strong></p>
     </div>
 
+    <div class="row">
+
+        
+        <div class="col-md-6 col-xl-3 mb-4">
+            <div class="card shadow-sm border-left-primary h-100 py-2">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-alt fa-2x text-primary mb-2"></i>
+                    <h5 class="card-title">Mi Horario</h5>
+                    <p class="card-text text-muted">Consulta tus clases programadas.</p>
+                    <a asp-controller="Schedule" asp-action="Index" class="btn btn-primary btn-sm">Ver horario</a>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="col-md-6 col-xl-3 mb-4">
+            <div class="card shadow-sm border-left-success h-100 py-2">
+                <div class="card-body text-center">
+                    <i class="fas fa-search-location fa-2x text-success mb-2"></i>
+                    <h5 class="card-title">Buscar Salón</h5>
+                    <p class="card-text text-muted">Ubica un salón por docente, asignatura o código.</p>
+                    <a asp-controller="Search" asp-action="Index" class="btn btn-success btn-sm">Ir a búsqueda</a>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="col-md-6 col-xl-3 mb-4">
+            <div class="card shadow-sm border-left-info h-100 py-2">
+                <div class="card-body text-center">
+                    <i class="fas fa-map-marked-alt fa-2x text-info mb-2"></i>
+                    <h5 class="card-title">Mapa del Campus</h5>
+                    <p class="card-text text-muted">Consulta la ubicación geográfica de los edificios.</p>
+                    <a asp-controller="Location" asp-action="Index" class="btn btn-info btn-sm">Ver mapa</a>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="col-md-6 col-xl-3 mb-4">
+            <div class="card shadow-sm border-left-warning h-100 py-2">
+                <div class="card-body text-center">
+                    <i class="fas fa-robot fa-2x text-warning mb-2"></i>
+                    <h5 class="card-title">Asistente Virtual</h5>
+                    <p class="card-text text-muted">¿Tienes dudas? Pregunta al Chatbot.</p>
+                    <a asp-controller="Chatbot" asp-action="Index" class="btn btn-warning btn-sm">Iniciar Chat</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <div class="card shadow-sm border-left-danger">
+                <div class="card-body">
+                    <h5 class="text-danger"><i class="fas fa-exclamation-triangle me-2"></i> Última Notificación</h5>
+                    <p class="text-muted mt-2">📢 <strong>¡Aviso importante!</strong> Se cancela la clase de <strong>Minería de Datos</strong> programada para el jueves a las 10:00 AM debido a mantenimiento en el aula.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
