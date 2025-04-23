@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 public class ProfileController : Controller
 {
-    [Authorize]
+    //[Authorize]
     public IActionResult Index()
     {
         return View();

@@ -1,4 +1,5 @@
-﻿document.addEventListener("DOMContentLoaded", function () {
+﻿
+document.addEventListener("DOMContentLoaded", function () {
     // Obtener referencias a los elementos del DOM
     const selectElement = document.getElementById("SelecSearcht");
     const inputElement = document.getElementById("ValueSearch");
@@ -56,7 +57,7 @@
             }
             
             const data = await response.json();
-            
+            console.log(data)
             if (data.success) {
                 
                 responseSection.innerHTML = `
@@ -64,6 +65,11 @@
                         <strong>Resultado:</strong> ${data.message}
                     </div>                  
                 `;
+
+                const ruta = data.data ? data.data["RutaEdificio"] : "";
+
+                MostrarRecorrido(ruta)
+
             } else {
                 // Mostrar un mensaje de error si success es false
                 responseSection.innerHTML = `
@@ -81,4 +87,23 @@
             `;
         }
     });
+
+
+
+
 });
+
+
+function MostrarRecorrido(ruta) {
+
+    if (ruta == "")
+        return
+
+
+    const rutaJson = JSON.parse(ruta)
+
+    rutaJson.forEach((item)=>{
+
+        console.log('Latitud:' + item.Latitud + ' - ' + 'Longitu:' + item.Longitud)
+    })
+}

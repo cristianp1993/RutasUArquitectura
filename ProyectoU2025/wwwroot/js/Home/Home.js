@@ -16,8 +16,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Evento para el botón INGRESAR
-    loginButton.addEventListener("click", function () {
-        
+    loginButton.addEventListener("click", function (e) {
+        e.preventDefault()
+
         const email = emailInput.value.trim();
         const password = passwordInput.value.trim();
 

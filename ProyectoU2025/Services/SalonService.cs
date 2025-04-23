@@ -82,7 +82,8 @@ namespace ProyectoU2025.Services
                         salon.EdificioNombre,
                         salon.SedeNombre,
                         salon.AsignaturaNombre,
-                        salon.DocenteNombre
+                        salon.DocenteNombre,
+                        salon.RutaEdificio
                     }
                 });
             }

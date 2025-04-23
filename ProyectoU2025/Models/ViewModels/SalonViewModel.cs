@@ -40,5 +40,7 @@
 
         // Nuevo código del salón en caso de cambio de aula (si existe)
         public string NuevoSalonID { get; set; }
+
+        public string RutaEdificio { get; set; }
     }
 }
