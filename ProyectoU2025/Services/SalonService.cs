@@ -61,13 +61,18 @@ namespace ProyectoU2025.Services
                         cambio = $" ⚠️ Cambio de aula entre el {fechaInicio} y el {fechaFin}. Motivo: {motivo}.{nuevaUbicacion}";
                     }
 
-                    return tipo.ToLower() switch
+                    var mensajeTexto = tipo.ToLower() switch
                     {
                         "docente" => $"El docente {salon.DocenteNombre} estará en el salón {salon.SalonNombre}, en el edificio {salon.EdificioNombre}, sede {salon.SedeNombre}, dictando la clase {salon.AsignaturaNombre}.{horario}{cambio}",
                         "asignatura" => $"La clase de {salon.AsignaturaNombre} será en el salón {salon.SalonNombre}, edificio {salon.EdificioNombre}, sede {salon.SedeNombre}.{horario}{cambio}",
                         "clase" => $"La clase con código {valorInput}, asignatura {salon.AsignaturaNombre}, se dictará en el salón {salon.SalonNombre}, edificio {salon.EdificioNombre}, sede {salon.SedeNombre}, con el profesor {salon.DocenteNombre}.{horario}{cambio}",
                         "salon" => $"El salón {salon.SalonNombre} está en el edificio {salon.EdificioNombre}, sede {salon.SedeNombre}, con clase a cargo de {salon.DocenteNombre}.{horario}{cambio}",
                         _ => "Tipo de búsqueda no reconocido."
+                    };
+                    return new
+                    {
+                        mensajes = mensajeTexto,
+                        ruta = salon.RutaEdificio
                     };
                 }).ToList();
 

@@ -57,21 +57,21 @@
                 `;
 
                 data.data.forEach((mensaje, index) => {
-                    // Simulación de dato oculto (ejemplo: ruta, salonID, etc.)
                     const rutaFicticia = `Ruta-Salon-${index}`;
 
                     html += `
                         <div class="alert alert-info d-flex justify-content-between align-items-center" role="alert">
-                            <span>${mensaje}</span>
-                            <button 
-                                class="btn btn-outline-success btn-sm"
-                                data-ruta="${rutaFicticia}" 
-                                onclick="verRecorrido(this)">
-                                <i class="fas fa-route"></i>
+                            <span>${mensaje.mensajes}</span>
+                            <button
+                              class="btn btn-outline-success btn-sm"
+                              data-ruta='${mensaje.ruta}' 
+                              onclick="verRecorrido(this)">
+                              <i class="fas fa-route"></i>
                             </button>
                         </div>
                     `;
                 });
+
 
                 responseSection.innerHTML = html;
             } else {

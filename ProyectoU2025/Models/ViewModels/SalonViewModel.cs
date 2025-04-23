@@ -42,6 +42,8 @@
 
         // Nuevo código del salón en caso de cambio de aula (si existe)
         public string NuevoSalonID { get; set; }
+
+        public string RutaEdificio { get; set; }
         public string Dia { get; set; }                
         public TimeSpan? HoraInicio { get; set; }      
         public TimeSpan? HoraFin { get; set; }
