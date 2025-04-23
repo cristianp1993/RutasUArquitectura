@@ -74,12 +74,14 @@ namespace ProyectoU2025.Controllers
                 {
                     usu_google_id = googleId,
                     usu_nombre = name,
-                    usu_email = email,
-                    usu_rol = "usuario", // Rol por defecto                  
+                    usu_email = email,                  
                     usu_contrasenia = "123456"
                 };
 
                 usuario.usu_id = await _usuarioRepository.AddAsync(usuario);
+
+                // Se lee el usuario nuevamente desde la BD para obtener el rol y código actualizado
+                usuario = await _usuarioRepository.GetByIdAsync(usuario.usu_id);
             }
             else if (string.IsNullOrEmpty(usuario.usu_google_id))
             {
@@ -96,7 +98,8 @@ namespace ProyectoU2025.Controllers
             {
                 new Claim(ClaimTypes.NameIdentifier, usuario.usu_id.ToString()),
                 new Claim(ClaimTypes.Email, usuario.usu_email),
-                new Claim(ClaimTypes.Role, usuario.usu_rol)
+                new Claim(ClaimTypes.Role, usuario.usu_rol),
+                new Claim(ClaimTypes.Name, usuario.usu_nombre)
             };
 
             var claimsIdentity = new ClaimsIdentity(

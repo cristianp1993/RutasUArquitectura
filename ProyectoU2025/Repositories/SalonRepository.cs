@@ -14,9 +14,8 @@ namespace ProyectoU2025.Repositories
             _context = context;
         }
 
-        public async Task<SalonViewModel> GetSalonAsync(string tipo, string valorInput)
+        public async Task<List<SalonViewModel>> GetSalonesAsync(string tipo, string valorInput)
         {
-            // Validar que los parámetros no sean nulos o vacíos
             if (string.IsNullOrWhiteSpace(tipo) || string.IsNullOrWhiteSpace(valorInput))
             {
                 throw new ArgumentException("Los parámetros 'tipo' y 'valorInput' son obligatorios.");
@@ -24,12 +23,14 @@ namespace ProyectoU2025.Repositories
 
             await using var con = await _context.CreateConnectionAsync();
 
-            // Ejecutar el procedimiento almacenado con los parámetros
-            return await con.QueryFirstOrDefaultAsync<SalonViewModel>(
+            var result = await con.QueryAsync<SalonViewModel>(
                 SalonQuerys.sp_GetInfoSalon,
                 new { SearchType = tipo, SearchParam = valorInput },
-                commandType: System.Data.CommandType.StoredProcedure);
+                commandType: System.Data.CommandType.StoredProcedure
+            );
 
+            return result.ToList();
         }
+
     }
 }

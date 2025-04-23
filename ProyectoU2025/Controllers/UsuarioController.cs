@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity.Data;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using ProyectoU2025.Repositories;
 using ProyectoU2025.Repositories.Interfaces;
+using System.Security.Claims;
 
 namespace ProyectoU2025.Controllers
 {
@@ -49,7 +52,28 @@ namespace ProyectoU2025.Controllers
 
                 // Almacenar información del usuario en la sesión
                 _sessionManager.SetUserSession(usuario);
-                
+
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, usuario.usu_id.ToString()),
+                    new Claim(ClaimTypes.Email, usuario.usu_email),
+                    new Claim(ClaimTypes.Role, usuario.usu_rol),
+                    new Claim(ClaimTypes.Name, usuario.usu_nombre)
+                };
+
+                var claimsIdentity = new ClaimsIdentity(
+                    claims,
+                    CookieAuthenticationDefaults.AuthenticationScheme);
+
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity),
+                    new AuthenticationProperties
+                    {
+                        IsPersistent = true,
+                        ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(200)
+                    });
+
                 return Ok(new { success = true, redirectUrl = "/Profile/Index" });
             }
             catch (Exception ex)

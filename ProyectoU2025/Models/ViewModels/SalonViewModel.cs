@@ -17,6 +17,8 @@
         // Código del salón
         public string SalonCodigo { get; set; }
 
+        public string SalonNombre { get; set; }
+
         // Nombre del edificio
         public string EdificioNombre { get; set; }
 
@@ -40,7 +42,12 @@
 
         // Nuevo código del salón en caso de cambio de aula (si existe)
         public string NuevoSalonID { get; set; }
-
-        public string RutaEdificio { get; set; }
+        public string Dia { get; set; }                
+        public TimeSpan? HoraInicio { get; set; }      
+        public TimeSpan? HoraFin { get; set; }
+        public string? NuevoSalonNombre { get; set; }
+        public string? NuevoBloqueNombre { get; set; }
+        public string? NuevoEdificioNombre { get; set; }
+        public string? NuevaSedeNombre { get; set; }
     }
 }

@@ -4,8 +4,8 @@ namespace ProyectoU2025.Repositories.Interfaces
 {
     public interface ISalonRepository
     {
-       
-      Task<SalonViewModel> GetSalonAsync(string tipo, string valorInput);
-        
+
+        Task<List<SalonViewModel>> GetSalonesAsync(string tipo, string valorInput);
+
     }
 }

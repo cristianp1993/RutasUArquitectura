@@ -1,45 +1,36 @@
-﻿
-document.addEventListener("DOMContentLoaded", function () {
-    // Obtener referencias a los elementos del DOM
+﻿document.addEventListener("DOMContentLoaded", function () {
     const selectElement = document.getElementById("SelecSearcht");
     const inputElement = document.getElementById("ValueSearch");
     const buttonElement = document.getElementById("btn-buscar-info");
     const responseSection = document.querySelector(".response");
 
-    // Referencias al diálogo
     const validationDialog = document.getElementById("validationDialog");
     const dialogMessage = document.getElementById("dialogMessage");
     const closeDialogButton = document.getElementById("closeDialogButton");
 
-    // Cerrar el diálogo cuando se hace clic en el botón "Cerrar"
     closeDialogButton.addEventListener("click", function () {
         validationDialog.close();
     });
 
-    // Agregar un evento click al botón
     buttonElement.addEventListener("click", async function () {
-        // Limpiar la sección de respuesta
         responseSection.innerHTML = "";
 
-        // Obtener los valores del select y del input
         const tipo = selectElement.value.trim();
         const valorInput = inputElement.value.trim();
 
-        // Validar que ambos campos tengan valor
         if (!tipo) {
             dialogMessage.textContent = "Por favor, selecciona una opción válida.";
-            validationDialog.showModal(); 
+            validationDialog.showModal();
             return;
         }
 
         if (!valorInput) {
             dialogMessage.textContent = "Por favor, ingresa un valor para buscar.";
-            validationDialog.showModal(); 
+            validationDialog.showModal();
             return;
         }
 
         try {
-            // Realizar la solicitud fetch POST
             const response = await fetch("/Ubicacion/Salon", {
                 method: "POST",
                 headers: {
@@ -51,27 +42,39 @@ document.addEventListener("DOMContentLoaded", function () {
                 })
             });
 
-            // Verificar si la respuesta es exitosa
             if (!response.ok) {
                 throw new Error(`Error HTTP: ${response.status}`);
             }
-            
+
             const data = await response.json();
-            console.log(data)
+            console.log(data);
+
             if (data.success) {
-                
-                responseSection.innerHTML = `
+                let html = `
                     <div class="alert alert-success" role="alert">
                         <strong>Resultado:</strong> ${data.message}
-                    </div>                  
+                    </div>
                 `;
 
-                const ruta = data.data ? data.data["RutaEdificio"] : "";
+                data.data.forEach((mensaje, index) => {
+                    // Simulación de dato oculto (ejemplo: ruta, salonID, etc.)
+                    const rutaFicticia = `Ruta-Salon-${index}`;
 
-                MostrarRecorrido(ruta)
+                    html += `
+                        <div class="alert alert-info d-flex justify-content-between align-items-center" role="alert">
+                            <span>${mensaje}</span>
+                            <button 
+                                class="btn btn-outline-success btn-sm"
+                                data-ruta="${rutaFicticia}" 
+                                onclick="verRecorrido(this)">
+                                <i class="fas fa-route"></i>
+                            </button>
+                        </div>
+                    `;
+                });
 
+                responseSection.innerHTML = html;
             } else {
-                // Mostrar un mensaje de error si success es false
                 responseSection.innerHTML = `
                     <div class="alert alert-danger" role="alert">
                         <strong>Error:</strong> ${data.message}
@@ -79,7 +82,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 `;
             }
         } catch (error) {
-            // Mostrar un mensaje de error en caso de excepción
             responseSection.innerHTML = `
                 <div class="alert alert-danger" role="alert">
                     <strong>Error inesperado:</strong> ${error.message}
@@ -87,23 +89,12 @@ document.addEventListener("DOMContentLoaded", function () {
             `;
         }
     });
-
-
-
-
 });
 
+function verRecorrido(btn) {
+    const ruta = btn.getAttribute("data-ruta");
+    console.log(`Ruta a mostrar: ${ruta}`);
 
-function MostrarRecorrido(ruta) {
-
-    if (ruta == "")
-        return
-
-
-    const rutaJson = JSON.parse(ruta)
-
-    rutaJson.forEach((item)=>{
-
-        console.log('Latitud:' + item.Latitud + ' - ' + 'Longitu:' + item.Longitud)
-    })
+    // Ejemplo para un futuro:
+    // window.location.href = `/Recorrido/Mostrar?ruta=${encodeURIComponent(ruta)}`;
 }

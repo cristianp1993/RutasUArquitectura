@@ -16,7 +16,8 @@ builder.Services.AddScoped<ISessionManager, SessionManager>();
 builder.Services.AddScoped<ISalonRepository, SalonRepository>();
 //builder.Services.AddHttpClient<DeepSeekService>();
 builder.Services.AddScoped<SalonService>();
-
+builder.Services.AddScoped<IScheduleRepository, ScheduleRepository>();
+builder.Services.AddScoped<ScheduleService>();
 
 // Configuración de sesión 
 builder.Services.AddSession(options =>
