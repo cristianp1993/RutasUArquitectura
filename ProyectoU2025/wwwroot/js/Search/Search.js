@@ -91,41 +91,5 @@
     });
 });
 
-function verRecorrido(btn) {
-    const ruta = JSON.parse(btn.getAttribute("data-ruta"));
-    console.log(`Ruta a mostrar: ${ruta}`);
 
-    const coordenadas = ruta.map(punto => [punto.Latitud, punto.Longitud]);
-
-    console.log(coordenadas);
-
-    
-    ruta.forEach((punto, index) => {
-        const latitud = punto.Latitud;
-        const longitud = punto.Longitud;
-
-        // Determinar color según posición
-        let color = 'blue';
-        if (index === 0) {
-            color = 'red';
-            map.setView([latitud, longitud], 20); 
-        } else if (index === ruta.length - 1) {
-            color = 'green';
-        }
-
-        // Crear el punto circular con color dinámico
-        L.circleMarker([latitud, longitud], {
-            radius: 4,
-            color: color,
-            fillColor: color,
-            fillOpacity: 1
-        })
-            .addTo(map)
-            .bindPopup(`Punto ${index + 1}: Lat ${latitud}, Lng ${longitud}`);
-    });
-
-
-        const linea = L.polyline(coordenadas, { color: 'blue' }).addTo(map);
-
-}
 
