@@ -68,7 +68,7 @@ function verRecorrido(btn) {
             map.setView([latitud, longitud], 20);
         } else if (index === ruta.length - 1) {
             color = 'green';
-            descripcion = 'Salón';
+            descripcion = 'Entrada Edificio';
         }
 
         L.circleMarker([latitud, longitud], {
@@ -108,7 +108,7 @@ function verRecorrido(btn) {
             </div>
             <div style="display: flex; align-items: center; margin-bottom: 5px;">
                 <div style="width: 16px; height: 16px; background-color: #2ED573; border-radius: 50%; border: 2px solid white; margin-right: 8px;"></div>
-                <span>Salón</span>
+                <span>Entrada Edificio</span>
             </div>
             <div style="display: flex; align-items: center; margin-bottom: 5px;">
                 <div style="width: 16px; height: 16px; background-color: #1E90FF; border-radius: 50%; border: 2px solid white; margin-right: 8px;"></div>
