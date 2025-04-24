@@ -15,6 +15,10 @@
     buttonElement.addEventListener("click", async function () {
         responseSection.innerHTML = "";
 
+        if (typeof limpiarMapa === "function") {
+            limpiarMapa();
+        }
+
         const tipo = selectElement.value.trim();
         const valorInput = inputElement.value.trim();
 
