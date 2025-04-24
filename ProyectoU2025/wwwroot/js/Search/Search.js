@@ -78,6 +78,28 @@
 
 
                 responseSection.innerHTML = html;
+
+                // Obtener la URL base del backend Razor
+                const baseUrlImg = document.getElementById("carouselUbicacion").getAttribute("data-base-url");
+
+                // Tomar la primera coincidencia del array de resultados
+                const primera = data.data[0];
+
+                // Validar que existan URLs
+                const salonImg = primera.salonImagenUrl ? `${baseUrlImg}/${primera.salonImagenUrl}` : `${baseUrlImg}/default_salon.jpg`;
+                const edificioImg = primera.edificioImagenUrl ? `${baseUrlImg}/${primera.edificioImagenUrl}` : `${baseUrlImg}/default_edificio.jpg`;
+
+                // Actualizar dinámicamente el carrusel
+                const carouselInner = document.querySelector("#carouselUbicacion .carousel-inner");
+                carouselInner.innerHTML = `
+                    <div class="carousel-item active">
+                        <img src="${edificioImg}" class="d-block w-100" alt="Edificio">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="${salonImg}" class="d-block w-100" alt="Salón">
+                    </div>
+                `;
+
             } else {
                 responseSection.innerHTML = `
                     <div class="alert alert-danger" role="alert">
