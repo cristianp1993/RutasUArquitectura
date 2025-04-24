@@ -212,15 +212,12 @@ BEGIN
 END
 GO
 
-
 CREATE OR ALTER PROCEDURE dbo.GetInfoClase
     @SearchParam NVARCHAR(255),
     @SearchType NVARCHAR(50) = NULL  -- Puede ser 'docente', 'clase', 'asignatura', 'salon'
 AS
 BEGIN
     SET NOCOUNT ON;
-
-	DECLARE @EdificioId INT;
 
     IF @SearchParam IS NULL OR LTRIM(RTRIM(@SearchParam)) = ''
     BEGIN
@@ -240,66 +237,34 @@ BEGIN
         RETURN;
     END
 
-SELECT TOP 1 @EdificioId = edi.edi_id
-FROM 
-    t_horario hor
-INNER JOIN 
-    t_asignatura asi ON hor.hor_asi_id = asi.asi_id
-INNER JOIN 
-    t_salon sal ON hor.hor_sal_id = sal.sal_id
-INNER JOIN 
-    t_bloque blo ON sal.sal_blo_id = blo.blo_id
-INNER JOIN 
-    t_edificio edi ON blo.blo_edi_id = edi.edi_id
-
-    WHERE 
-        CASE @SearchType
-            WHEN 'docente' THEN 
-                CASE WHEN asi.asi_docente_nombre LIKE '%' + @SearchParam + '%' THEN 1 ELSE 0 END
-            WHEN 'clase' THEN 
-                CASE WHEN asi.asi_id = CAST(@SearchParam AS INT) THEN 1 ELSE 0 END
-            WHEN 'asignatura' THEN 
-                CASE WHEN asi.asi_nombre LIKE '%' + @SearchParam + '%' THEN 1 ELSE 0 END
-            WHEN 'salon' THEN 
-                CASE WHEN sal.sal_codigo LIKE '%' + @SearchParam + '%' THEN 1 ELSE 0 END
-            ELSE 0
-        END = 1;
-
-    ---------------------------
-    -- CONSULTA PRINCIPAL
-    ---------------------------
-
     SELECT 
-		hor.hor_dia AS Dia,
-		hor.hor_hora_inicio AS HoraInicio,
-		hor.hor_hora_fin AS HoraFin,
-		hor.hor_fecha_inicio AS FechaInicio,
-		hor.hor_fecha_fin AS FechaFin,
-		sal.sal_codigo AS SalonCodigo,
-		sal.sal_nombre AS SalonNombre,
-		blo.blo_nombre AS BloqueNombre,
-		edi.edi_nombre AS EdificioNombre,
-		sed.sed_nombre AS SedeNombre,
-		asi.asi_nombre AS AsignaturaNombre,
-		asi.asi_docente_nombre AS DocenteNombre,
-		cam.cam_fecha_inicio AS CambioFechaInicio,
-		cam.cam_fecha_fin AS CambioFechaFin,
-		cam.cam_motivo AS CambioMotivo,
-		cam.cam_nuevo_sal_id AS NuevoSalonID,
-		nsal.sal_nombre AS NuevoSalonNombre,
-		nblo.blo_nombre AS NuevoBloqueNombre,
-		nedi.edi_nombre AS NuevoEdificioNombre,
-		nsed.sed_nombre AS NuevaSedeNombre,
-		(SELECT 
-            rut_latitud AS Latitud,
-            rut_longitud AS Longitud
-        FROM 
-            t_ruta_edificio
-        WHERE 
-            rut_edi_id = @EdificioId
-        ORDER BY 
-            rut_orden
-        FOR JSON PATH)AS RutaEdificio
+        hor.hor_dia AS Dia,
+        hor.hor_hora_inicio AS HoraInicio,
+        hor.hor_hora_fin AS HoraFin,
+        hor.hor_fecha_inicio AS FechaInicio,
+        hor.hor_fecha_fin AS FechaFin,
+        sal.sal_codigo AS SalonCodigo,
+        sal.sal_nombre AS SalonNombre,
+        blo.blo_nombre AS BloqueNombre,
+        edi.edi_nombre AS EdificioNombre,
+        sed.sed_nombre AS SedeNombre,
+        asi.asi_nombre AS AsignaturaNombre,
+        asi.asi_docente_nombre AS DocenteNombre,
+        cam.cam_fecha_inicio AS CambioFechaInicio,
+        cam.cam_fecha_fin AS CambioFechaFin,
+        cam.cam_motivo AS CambioMotivo,
+        cam.cam_nuevo_sal_id AS NuevoSalonID,
+        nsal.sal_nombre AS NuevoSalonNombre,
+        nblo.blo_nombre AS NuevoBloqueNombre,
+        nedi.edi_nombre AS NuevoEdificioNombre,
+        nsed.sed_nombre AS NuevaSedeNombre,
+        (
+            SELECT rut_latitud AS Latitud, rut_longitud AS Longitud
+            FROM t_ruta_edificio
+            WHERE rut_edi_id = edi.edi_id
+            ORDER BY rut_orden
+            FOR JSON PATH
+        ) AS RutaEdificio
     FROM 
         t_horario hor
     INNER JOIN 
@@ -314,10 +279,14 @@ INNER JOIN
         t_sede sed ON edi.edi_sed_id = sed.sed_id
     LEFT JOIN 
         t_cambio_aula cam ON hor.hor_id = cam.cam_hor_id
-	LEFT JOIN t_salon nsal ON cam.cam_nuevo_sal_id = nsal.sal_id
-LEFT JOIN t_bloque nblo ON nsal.sal_blo_id = nblo.blo_id
-LEFT JOIN t_edificio nedi ON nblo.blo_edi_id = nedi.edi_id
-LEFT JOIN t_sede nsed ON nedi.edi_sed_id = nsed.sed_id
+    LEFT JOIN 
+        t_salon nsal ON cam.cam_nuevo_sal_id = nsal.sal_id
+    LEFT JOIN 
+        t_bloque nblo ON nsal.sal_blo_id = nblo.blo_id
+    LEFT JOIN 
+        t_edificio nedi ON nblo.blo_edi_id = nedi.edi_id
+    LEFT JOIN 
+        t_sede nsed ON nedi.edi_sed_id = nsed.sed_id
     WHERE 
         CASE @SearchType
             WHEN 'docente' THEN 
