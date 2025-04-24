@@ -258,6 +258,8 @@ BEGIN
         nblo.blo_nombre AS NuevoBloqueNombre,
         nedi.edi_nombre AS NuevoEdificioNombre,
         nsed.sed_nombre AS NuevaSedeNombre,
+        sal.sal_imagen_url AS SalonImagenUrl,
+        edi.edi_imagen_url AS EdificioImagenUrl,
         (
             SELECT rut_latitud AS Latitud, rut_longitud AS Longitud
             FROM t_ruta_edificio

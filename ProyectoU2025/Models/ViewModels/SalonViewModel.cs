@@ -51,5 +51,7 @@
         public string? NuevoBloqueNombre { get; set; }
         public string? NuevoEdificioNombre { get; set; }
         public string? NuevaSedeNombre { get; set; }
+        public string SalonImagenUrl { get; set; }
+        public string EdificioImagenUrl { get; set; }
     }
 }
