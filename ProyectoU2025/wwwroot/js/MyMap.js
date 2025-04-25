@@ -1,44 +1,35 @@
-﻿let map = L.map('my_map').setView([5.055337, -75.493689], 17)
+﻿let map = L.map('my_map').setView([5.055337, -75.493689], 17);
 
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
-L.marker([51.5, -0.09]).addTo(map)
-    .bindPopup('Universidad de Caldas')
+L.marker([5.055337, -75.493689]).addTo(map)
+    .bindPopup('Universidad de Caldas');
 
 let legend = null;
-function limpiarMapa() {
+
+window.limpiarMapa = function () {
     map.eachLayer(layer => {
-        
         if (!(layer instanceof L.TileLayer)) {
             map.removeLayer(layer);
         }
     });
 
-    
     if (legend) {
         map.removeControl(legend);
         legend = null;
     }
-}
+};
 
-function verRecorrido(btn) {
-    if (!btn.hasAttribute("data-ruta")) {
-        console.error("El botón no tiene el atributo data-ruta");
-        return;
-    }
+window.pintarRuta = function (rutaJson) {
+    console.log("pintarRuta fue llamada", rutaJson);
+    if (!rutaJson) return;
 
-    const rutaString = btn.getAttribute("data-ruta");
     let ruta;
 
-    if (!rutaString || rutaString.trim() === "" || rutaString === 'null') {
-        console.error("El atributo data-ruta está vacío");
-        return;
-    }
-
     try {
-        ruta = JSON.parse(rutaString);
+        ruta = JSON.parse(rutaJson);
     } catch (e) {
         console.error("Error al parsear JSON:", e.message);
         return;
@@ -49,15 +40,13 @@ function verRecorrido(btn) {
         return;
     }
 
-    // Limpiar mapa antes de pintar nueva ruta
     limpiarMapa();
 
-    const coordenadas = ruta.map(punto => [punto.Latitud, punto.Longitud]);
-    console.log(coordenadas);
+    const coordenadas = ruta.map(p => [parseFloat(p.Latitud), parseFloat(p.Longitud)]);
 
     ruta.forEach((punto, index) => {
-        const latitud = punto.Latitud;
-        const longitud = punto.Longitud;
+        const lat = parseFloat(punto.Latitud);
+        const lng = parseFloat(punto.Longitud);
 
         let color = 'blue';
         let descripcion = `Punto ${index + 1}`;
@@ -65,27 +54,25 @@ function verRecorrido(btn) {
         if (index === 0) {
             color = 'red';
             descripcion = 'Entrada Universidad';
-            map.setView([latitud, longitud], 20);
+            map.setView([lat, lng], 20);
         } else if (index === ruta.length - 1) {
             color = 'green';
             descripcion = 'Entrada Edificio';
         }
 
-        L.circleMarker([latitud, longitud], {
+        L.circleMarker([lat, lng], {
             radius: 4,
             color: color,
             fillColor: color,
             fillOpacity: 1
         })
             .addTo(map)
-            .bindPopup(`${descripcion}<br>Lat ${latitud}, Lng ${longitud}`);
+            .bindPopup(`${descripcion}<br>Lat ${lat}, Lng ${lng}`);
     });
 
-    const linea = L.polyline(coordenadas, { color: 'blue' }).addTo(map);
+    L.polyline(coordenadas, { color: 'blue' }).addTo(map);
 
-    // Crear la leyenda solo una vez
     legend = L.control({ position: 'topright' });
-
     legend.onAdd = function () {
         const div = L.DomUtil.create('div', '');
 
@@ -124,4 +111,4 @@ function verRecorrido(btn) {
     };
 
     legend.addTo(map);
-}
+};

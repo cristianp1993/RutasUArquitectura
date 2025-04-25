@@ -72,7 +72,10 @@ namespace ProyectoU2025.Services
                     return new
                     {
                         mensajes = mensajeTexto,
-                        ruta = salon.RutaEdificio
+                        ruta = salon.RutaEdificio,
+                        salonImagenUrl = salon.SalonImagenUrl,
+                        edificioImagenUrl = salon.EdificioImagenUrl
+
                     };
                 }).ToList();
 
