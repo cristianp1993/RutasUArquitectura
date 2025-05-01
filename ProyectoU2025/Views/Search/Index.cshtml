@@ -1,7 +1,7 @@
 @inject IConfiguration Configuration
-@{
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    var urlBaseImg = Configuration["UrlImagenes"];
+@{ 
+    Layout = "~/Views/Shared/_Layout.cshtml"; 
+    var urlBaseImg = Configuration["UrlImagenes"]; 
 }
 
 <style>
@@ -10,83 +10,83 @@
         transition: opacity 0.5s ease-in-out;
         display: none;
     }
-
-        #carouselUbicacion.mostrar {
-            display: block !important;
-            opacity: 1;
-        }
+    #carouselUbicacion.mostrar {
+        display: block !important;
+        opacity: 1;
+    }
 </style>
 
-<div class="container-fluid">
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-md-6 d-flex">
-                <div class="card shadow-sm w-100 h-400">
-                    <div class="card-body d-flex flex-column justify-content-between">
-                        <div>
-                            <div class="text-center">
-                                <i class="fas fa-search-location fa-2x"></i>
-                                <h1 class="h3 mb-3 ">Buscar Salón</h1>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-12 mb-3">
-                                    <select class="form-control form-control-user" id="SelecSearcht">
-                                        <option value="">Seleccione una opción</option>
-                                        <option value="asignatura">Asignatura</option>
-                                        <option value="docente">Docente</option>
-                                        <option value="salon">Salón</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-12 mb-3">
-                                    <input type="text" class="form-control form-control-user" id="ValueSearch" placeholder="Ingrese valor">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="text-center">
-                            <button id="btn-buscar-info" class="btn btn-success btn-sm">BUSCAR</button>
-                        </div>
-
-                        <div>
-                            <h4>Resultado de la búsqueda</h4>
-                            <section class="response"></section>
-                        </div>
-
+<div class="container mt-4">
+    <div class="row">
+        <!-- Tarjeta de Búsqueda -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="text-center">
+                        <i class="fas fa-search-location fa-2x"></i>
+                        <h1 class="h3 mb-3">Buscar Salón</h1>
                     </div>
-                </div>
-            </div>
 
-            <!-- Segunda tarjeta: Ubicación -->
-            <div class="col-md-6">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <div class="text-center">
-                            <i class="fas fa-map-marker-alt fa-2x"></i>
-                            <h1 class="h3 mb-3 text-gray-800">Ubicación</h1>
-                        </div>
+                    <div class="mb-3">
+                        <select class="form-control" id="SelecSearcht">
+                            <option value="">Seleccione una opción</option>
+                            <option value="asignatura">Asignatura</option>
+                            <option value="docente">Docente</option>
+                            <option value="salon">Salón</option>
+                        </select>
+                    </div>
 
-                        <div id="carouselUbicacion" class="carousel slide carousel-fade mb-3" data-ride="carousel" data-base-url="@urlBaseImg">
-                            <div class="carousel-inner"></div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="ValueSearch" placeholder="Ingrese valor">
+                    </div>
 
-                            <a class="carousel-control-prev" href="#carouselUbicacion" role="button" data-slide="prev">
-                                <span class="carousel-control-prev-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
-                                <span class="sr-only">Anterior</span>
-                            </a>
-                            <a class="carousel-control-next" href="#carouselUbicacion" role="button" data-slide="next">
-                                <span class="carousel-control-next-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
-                                <span class="sr-only">Siguiente</span>
-                            </a>
-                        </div>
+                    <div class="text-center">
+                        <button id="btn-buscar-info" class="btn btn-success btn-sm">BUSCAR</button>
+                    </div>
 
-                        <div id="my_map"></div>
+                    <div>
+                        <h4>Resultado de la búsqueda</h4>
+                        <section class="response"></section>
                     </div>
                 </div>
             </div>
         </div>
+        <!-- Tarjeta de Búsqueda -->
+
+        <!-- Contenedor de Ubicación y Mapa -->
+        <div class="col-md-6">
+            <!-- Tarjeta de Ubicación -->
+            <div class="card shadow-sm mb-3"> <!-- Agregué margen inferior -->
+                <div class="card-body text-center">
+                    <i class="fas fa-map-marker-alt fa-2x"></i>
+                    <h1 class="h3 mb-3 text-gray-800">Ubicación</h1>
+
+                    <div id="carouselUbicacion" class="carousel slide carousel-fade" data-ride="carousel" data-base-url="@urlBaseImg">
+                        <div class="carousel-inner"></div>
+                        <a class="carousel-control-prev" href="#carouselUbicacion" role="button" data-slide="prev">
+                            <span class="carousel-control-prev-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                        </a>
+                        <a class="carousel-control-next" href="#carouselUbicacion" role="button" data-slide="next">
+                            <span class="carousel-control-next-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta de Mapa -->
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-map-pin fa-2x"></i>
+                    <h1 class="h3 mb-3 text-gray-800">MAPA</h1>
+                    <div id="my_map"></div>
+                </div>
+            </div>
+        </div>
+        <!-- Contenedor de Ubicación y Mapa -->
     </div>
 </div>
+</div>
+
 
 <!-- Diálogo para mensajes de validación -->
 <dialog id="validationDialog" class="dialog">

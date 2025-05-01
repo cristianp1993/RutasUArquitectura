@@ -1,6 +1,79 @@
 ﻿@{
-    ViewData["Title"] = "Chatbot";
+    ViewData["Title"] = "Asistente virtual";
 }
 
-<h1>Chatbot</h1>
-<p>¡Hola! Aquí irá tu asistente virtual 😄</p>
+<div class="container mt-4 d-flex justify-content-center">
+    <div class="card shadow-lg border-0" style="max-width: 500px; width: 100%;">
+        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0 font-weight-bold">Asistente virtual</h4>
+            <!-- Logo redondo -->
+            <img src="~/img/200.png" alt="CampusNav Logo" class="rounded-circle" style="height: 50px; width: 50px; object-fit: cover;" />
+        </div>
+
+        <div class="card-body bg-light" style="min-height: 400px;" id="chatContainer">
+            <!-- Mensaje 1 -->
+            <div class="d-flex align-items-start mb-3">
+                <img src="~/img/200.png" class="rounded-circle" style="width: 50px; height: 50px;" />
+                <div class="ms-3 bg-white p-3 rounded shadow-sm">
+                    <p class="mb-1"><strong>¡Hola! 👋 Bienvenido a CampusNAV 🗺️📍</strong></p>
+                    <p class="mb-0">Soy tu asistente virtual y estoy aquí para ayudarte a encontrar salones, edificios y puntos clave dentro del campus UCAL. 🚀</p>
+                    <small class="text-muted d-block mt-1">@DateTime.Now.ToString("HH:mm:ss")</small>
+                </div>
+            </div>
+
+            <!-- Mensaje 2 -->
+            <div class="d-flex align-items-start mb-3">
+                <img src="~/img/200.png" class="rounded-circle" style="width: 50px; height: 50px;" />
+                <div class="ms-3 bg-white p-3 rounded shadow-sm">
+                    <p class="mb-0">Dime qué necesitas y te guiaré en segundos. 😊📍</p>
+                    <small class="text-muted d-block mt-1">@DateTime.Now.ToString("HH:mm:ss")</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer bg-white">
+            <form id="chatForm" class="d-flex">
+                <input type="text" id="userInput" class="form-control me-2" placeholder="Escribe tu mensaje..." />
+                <button type="submit" class="btn btn-primary">Enviar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('chatForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const input = document.getElementById('userInput');
+        const message = input.value.trim();
+        if (!message) return;
+
+        const time = new Date().toLocaleTimeString();
+        const container = document.getElementById('chatContainer');
+
+        // Crear burbuja de usuario
+        const userBubble = `
+            <div class="d-flex align-items-start justify-content-end mb-3">
+                <div class="me-3 bg-primary text-white p-3 rounded shadow-sm">
+                    <p class="mb-0">${message}</p>
+                    <small class="d-block text-light mt-1">${time}</small>
+                </div>
+            </div>`;
+        container.insertAdjacentHTML('beforeend', userBubble);
+
+        // Respuesta automática
+        setTimeout(() => {
+            const botBubble = `
+                <div class="d-flex align-items-start mb-3">
+                    <img src="/img/200.png" class="rounded-circle" style="width: 60px; height: 60px;" />
+                    <div class="ms-3 bg-white p-3 rounded shadow-sm">
+                        <p class="mb-0">Estoy procesando tu solicitud: <strong>${message}</strong></p>
+                        <small class="text-muted d-block mt-1">${time}</small>
+                    </div>
+                </div>`;
+            container.insertAdjacentHTML('beforeend', botBubble);
+            container.scrollTop = container.scrollHeight;
+        }, 600);
+
+        input.value = '';
+    });
+</script>
