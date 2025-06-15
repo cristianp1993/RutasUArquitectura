@@ -1,19 +1,18 @@
 ﻿@{
     ViewData["Title"] = "Asistente virtual";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="container mt-4 d-flex justify-content-center">
     <div class="card shadow-lg border-0" style="max-width: 500px; width: 100%;">
         <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
             <h4 class="mb-0 font-weight-bold">Asistente virtual</h4>
-            <!-- Logo redondo -->
             <img src="~/img/200.png" alt="CampusNav Logo" class="rounded-circle" style="height: 50px; width: 50px; object-fit: cover;" />
         </div>
 
-        <div class="card-body bg-light" style="min-height: 400px;" id="chatContainer">
-            <!-- Mensaje 1 -->
+        <div class="card-body bg-light" style="min-height: 400px; max-height: 600px; overflow-y: auto;" id="chatContainer">
             <div class="d-flex align-items-start mb-3">
-                <img src="~/img/200.png" class="rounded-circle" style="width: 50px; height: 50px;" />
+                <img src="https://img.freepik.com/vector-premium/icono-robot-signo-chat-bot-concepto-servicio-soporte-estilo-plano-personaje-chatbot_41737-795.jpg" class="rounded-circle" style="width: 50px; height: 50px;" />
                 <div class="ms-3 bg-white p-3 rounded shadow-sm">
                     <p class="mb-1"><strong>¡Hola! 👋 Bienvenido a CampusNAV 🗺️📍</strong></p>
                     <p class="mb-0">Soy tu asistente virtual y estoy aquí para ayudarte a encontrar salones, edificios y puntos clave dentro del campus UCAL. 🚀</p>
@@ -21,59 +20,189 @@
                 </div>
             </div>
 
-            <!-- Mensaje 2 -->
-            <div class="d-flex align-items-start mb-3">
-                <img src="~/img/200.png" class="rounded-circle" style="width: 50px; height: 50px;" />
-                <div class="ms-3 bg-white p-3 rounded shadow-sm">
-                    <p class="mb-0">Dime qué necesitas y te guiaré en segundos. 😊📍</p>
-                    <small class="text-muted d-block mt-1">@DateTime.Now.ToString("HH:mm:ss")</small>
-                </div>
-            </div>
         </div>
 
         <div class="card-footer bg-white">
             <form id="chatForm" class="d-flex">
                 <input type="text" id="userInput" class="form-control me-2" placeholder="Escribe tu mensaje..." />
-                <button type="submit" class="btn btn-primary">Enviar</button>
+                <button type="button" id="btn-consultar" class="btn btn-primary">Enviar</button>
             </form>
         </div>
     </div>
 </div>
 
+@section Scripts {
 <script>
-    document.getElementById('chatForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-        const input = document.getElementById('userInput');
-        const message = input.value.trim();
+    document.getElementById("btn-consultar").addEventListener("click", async () => {
+        const userInput = document.getElementById("userInput");
+        const message = userInput.value.trim();
+
         if (!message) return;
 
-        const time = new Date().toLocaleTimeString();
-        const container = document.getElementById('chatContainer');
+        // Añadir mensaje del usuario al chat
+        appendMessage("user", message);
 
-        // Crear burbuja de usuario
-        const userBubble = `
-            <div class="d-flex align-items-start justify-content-end mb-3">
-                <div class="me-3 bg-primary text-white p-3 rounded shadow-sm">
-                    <p class="mb-0">${message}</p>
-                    <small class="d-block text-light mt-1">${time}</small>
-                </div>
-            </div>`;
-        container.insertAdjacentHTML('beforeend', userBubble);
+        // Limpiar input
+        userInput.value = "";
 
-        // Respuesta automática
-        setTimeout(() => {
-            const botBubble = `
-                <div class="d-flex align-items-start mb-3">
-                    <img src="/img/200.png" class="rounded-circle" style="width: 60px; height: 60px;" />
-                    <div class="ms-3 bg-white p-3 rounded shadow-sm">
-                        <p class="mb-0">Estoy procesando tu solicitud: <strong>${message}</strong></p>
-                        <small class="text-muted d-block mt-1">${time}</small>
-                    </div>
-                </div>`;
-            container.insertAdjacentHTML('beforeend', botBubble);
-            container.scrollTop = container.scrollHeight;
-        }, 600);
+        const url = "https://localhost:7008/api/ia/preguntar";
+        showLoadingPopup();
 
-        input.value = '';
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ pregunta: message })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error del servidor: ${response.status}`);
+            }
+
+            const json = await response.json();
+            appendMessage("bot", json.respuesta || "No entendí la respuesta.");
+        } catch (error) {
+            console.error(error.message);
+            appendMessage("bot", "⚠️ Ocurrió un error al procesar tu pregunta.");
+        } finally {
+            hideLoadingPopup();
+        }
+
     });
+
+    function appendMessage(sender, text) {
+        const chatContainer = document.getElementById("chatContainer");
+
+        const currentTime = new Date().toLocaleTimeString();
+
+        const wrapper = document.createElement("div");
+        wrapper.classList.add("d-flex", "align-items-start", "mb-3");
+
+        if (sender === "bot") {
+            wrapper.innerHTML = `
+                <img src="https://img.freepik.com/vector-premium/icono-robot-signo-chat-bot-concepto-servicio-soporte-estilo-plano-personaje-chatbot_41737-795.jpg" class="rounded-circle" style="width: 70px; height: 70px;" />
+                <div class="ms-3 bg-white p-3 rounded shadow-sm">
+                    <p class="mb-0">${text}</p>
+                    <small class="text-muted d-block mt-1">${currentTime}</small>
+                </div>
+            `;
+        } else {
+            wrapper.classList.add("justify-content-end");
+            wrapper.innerHTML = `
+                <div class="me-3 bg-primary text-white p-3 rounded shadow-sm">
+                    <p class="mb-0">${text}</p>
+                    <small class="text-light d-block mt-1">${currentTime}</small>
+                </div>
+                <img src="/img/undraw_profile.svg" class="rounded-circle" style="width: 50px; height: 50px;" />
+            `;
+        }
+
+        chatContainer.appendChild(wrapper);
+
+        // Hacer scroll automático hacia el final    
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+        function showLoadingPopup() {
+        
+        if (!document.getElementById("loading-popup-style")) {
+            const style = document.createElement("style");
+            style.id = "loading-popup-style";
+            style.innerHTML = `
+                    @@keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+
+                #overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0, 0, 0, 0.5);
+                    z-index: 9998;
+                }
+
+                #loading-popup {
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    color: white;
+                    padding: 10px;
+                    border-radius: 5px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 100vh;
+                    z-index: 9999;
+                }
+
+                #spinner {
+                    border: 7px solid #f3f3f3;
+                    border-top: 7px solid #3498db;
+                    border-radius: 50%;
+                    width: 50px;
+                    height: 50px;
+                    animation: spin 1s linear infinite;
+                    position: relative;
+                }
+
+                #loading-image {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 30px;
+                    height: 30px;
+                    z-index: 10000;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+            
+        const loadingPopup = document.createElement("div");
+        loadingPopup.id = "loading-popup";
+
+        
+        const spinner = document.createElement("div");
+        spinner.id = "spinner";
+        loadingPopup.appendChild(spinner);
+
+        const loadingImage = document.createElement("img");
+        loadingImage.id = "loading-image";
+        loadingImage.src = "https://img.freepik.com/vector-premium/icono-robot-signo-chat-bot-concepto-servicio-soporte-estilo-plano-personaje-chatbot_41737-795.jpg";
+        loadingImage.alt = "Loading";
+        spinner.appendChild(loadingImage);
+
+       
+        const overlay = document.createElement("div");
+        overlay.id = "overlay";
+
+       
+        document.body.appendChild(overlay);
+        document.body.appendChild(loadingPopup);
+
+        document.body.style.overflow = "hidden";
+    }
+    
+    function hideLoadingPopup() {
+        const loadingPopup = document.getElementById("loading-popup");
+        if (loadingPopup) {
+            loadingPopup.parentNode.removeChild(loadingPopup);
+        }
+
+        const overlay = document.getElementById("overlay");
+        if (overlay) {
+            overlay.parentNode.removeChild(overlay);
+        }
+
+        // Restaurar el scroll del mouse
+        document.body.style.overflow = "auto";
+    }
 </script>
+}
