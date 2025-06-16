@@ -14,7 +14,6 @@ builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ISessionManager, SessionManager>();
 builder.Services.AddScoped<ISalonRepository, SalonRepository>();
-//builder.Services.AddHttpClient<DeepSeekService>();
 builder.Services.AddScoped<SalonService>();
 builder.Services.AddScoped<IScheduleRepository, ScheduleRepository>();
 builder.Services.AddScoped<ScheduleService>();
