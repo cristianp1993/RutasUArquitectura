@@ -52,3 +52,69 @@ Backend : C# .NET 8
 Frontend : HTML, CSS, JavaScript (Bootstrap)
 Base de Datos : Microsoft SQL Server
 
+## 🤖 Puesta en marcha del microservicio de IA
+
+> Estos pasos instalan **WSL 2 + Ubuntu**, compilan **llama.cpp** y arrancan el modelo **Gemma 1 B** como servidor HTTP en tu máquina local.  
+> Requieren **privilegios de administrador** y una conexión a Internet estable.
+
+---
+
+### 1. Descargar el modelo Gemma
+
+1. Descarga el archivo **`gemma-3-1b-it-Q4_K_M.gguf`**.  
+2. Crea la carpeta **`C:\Models\`** (o la ruta que prefieras) y coloca el archivo dentro.
+
+### 2. Instalar WSL 2 (Windows Subsystem for Linux)
+
+powershell
+# PowerShell como Administrador
+wsl --install
+Reinicia el equipo cuando lo solicite.
+
+Al primer arranque se terminará de instalar Ubuntu; asigna un usuario y contraseña cuando lo pida.
+
+3. Preparar Ubuntu
+bash
+Copiar
+Editar
+# En la consola de Ubuntu
+sudo apt update && sudo apt upgrade -y
+sudo apt install git build-essential cmake libcurl4-openssl-dev -y
+4. Clonar y compilar llama.cpp
+bash
+Copiar
+Editar
+cd ~
+git clone https://github.com/ggerganov/llama.cpp
+cd llama.cpp
+mkdir build && cd build
+cmake ..
+make -j        # compila con todos los núcleos disponibles
+5. Iniciar el servidor Llama
+bash
+Copiar
+Editar
+# Siempre desde Ubuntu
+cd ~/llama.cpp/build
+./bin/llama-server -m /mnt/c/Models/gemma-3-1b-it-Q4_K_M.gguf
+Si todo es correcto verás el mensaje:
+
+arduino
+Copiar
+Editar
+llama-server listening at http://localhost:8080 ...
+6. Arranque rápido (sesiones futuras)
+Cada vez que reinicies Windows → PowerShell como administrador:
+
+powershell
+Copiar
+Editar
+wsl                                 # abre Ubuntu
+cd ~/llama.cpp/build
+./bin/llama-server -m /mnt/c/Models/gemma-3-1b-it-Q4_K_M.gguf
+7. Ajustar el microservicio en tu proyecto
+Cadena de conexión de BD: actualiza appsettings.json en el proyecto de IA con la cadena correcta.
+
+Endpoint del modelo: configura la URL que consume la IA (por defecto http://localhost:8080) en tu servicio o HttpClient.
+
+Puerto: si cambias el puerto de llama-server, refleja el cambio en tu frontend/backend.
